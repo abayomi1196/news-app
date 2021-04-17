@@ -1,31 +1,66 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import styles from 'styles/Feed.module.css';
 
 const Feed = ({ articles, pageNumber }) => {
+  const router = useRouter();
+
   return (
     <>
       <Head>
         <title>{`News App | Feed Page (${pageNumber})`}</title>
       </Head>
 
-      <div className={styles.main}>
-        {articles.map(
-          (article, index) =>
-            article.description && ( //check to make sure article has content
-              <div key={index} className={styles.post}>
-                <Link href={article.url}>
-                  <a target="_blank" rel="noreferrer noopener">
-                    {article.title}
-                  </a>
-                </Link>
-                <p>{article.description}</p>
-                {article.urlToImage && (
-                  <img src={article.urlToImage} alt={article.title} />
-                )}
-              </div>
-            )
-        )}
+      <div className="page-container">
+        <div className={styles.main}>
+          {articles.map(
+            (article, index) =>
+              article.description && ( //check to make sure article has content
+                <div key={index} className={styles.post}>
+                  <Link href={article.url}>
+                    <a target="_blank" rel="noreferrer noopener">
+                      {article.title}
+                    </a>
+                  </Link>
+                  <p>{article.description}</p>
+                  {article.urlToImage && (
+                    <img src={article.urlToImage} alt={article.title} />
+                  )}
+                </div>
+              )
+          )}
+        </div>
+
+        {/* paginator */}
+        <div className={styles.paginator}>
+          {/* previous */}
+          <div
+            onClick={() => {
+              if (pageNumber > 1) {
+                router.push(`/feed/${pageNumber - 1}`);
+              }
+            }}
+            className={pageNumber <= 1 ? styles.disabled : styles.active}
+          >
+            Previous Page
+          </div>
+
+          {/* current page */}
+          <div>#{pageNumber}</div>
+
+          {/* next */}
+          <div
+            onClick={() => {
+              if (pageNumber < 4) {
+                router.push(`/feed/${pageNumber + 1}`);
+              }
+            }}
+            className={pageNumber >= 4 ? styles.disabled : styles.active}
+          >
+            Next Page
+          </div>
+        </div>
       </div>
     </>
   );
